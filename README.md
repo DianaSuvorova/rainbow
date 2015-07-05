@@ -2,8 +2,38 @@ http://dianasuvorova.github.io/rainbow/
 
 A playground to create webGL shaders.
 
-Example of creating and rendering a fragment shader:
+Example of creating and rendering a fragment shader 
+https://github.com/DianaSuvorova/rainbow/tree/master/vis/rainbow
 
+
+```html
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rainbow.</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <style type="text/css">
+      html, body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript" src="rainbow.js"></script>
+  </body>
+</html>
+
+```
 
 ```javascript
 
@@ -42,3 +72,5 @@ var fragmentShader = '\n\
 module.exports = fragmentShader;
 
 engine.render();
+
+```
