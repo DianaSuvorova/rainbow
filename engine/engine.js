@@ -18,20 +18,24 @@
     this.props.fragmentShader = this.props.fragmentShader || this.defaults.fragmentShader;
     
     this.gl = this._getWebGl();
-    this.program = this._createProgram();
-    this.timeLoad = Date.now();
-    this.mouse = {x: null, y: null};
-    if (this.props.interactive) this._attachMouseListeners();
+    if (!this.gl) this._noWebGlMessage();
+    else {
+      this.program = this._createProgram();
+      this.timeLoad = Date.now();
+      this.mouse = {x: null, y: null};
+      if (this.props.interactive) this._attachMouseListeners();
+    }
   };
 
-
   Engine.prototype.render = function () {
-    this._renderPlayground();
+    if (this.gl) this._renderPlayground();
   };
 
     Engine.prototype.renderAnimate = function () {
-    this._renderPlayground();
-    window.requestAnimationFrame(this.renderAnimate.bind(this));
+    if (this.gl) {
+      this._renderPlayground();
+      window.requestAnimationFrame(this.renderAnimate.bind(this));
+    }
   };
 
   Engine.prototype._createProgram = function () {
@@ -144,6 +148,14 @@
     catch (x) { gl = null; }
     return gl;
   };
-
+  
+  Engine.prototype._noWebGlMessage = function () {
+    var context = canvas.getContext("2d");
+    context.fillStyle = "black";
+    context.font = "10px Arial";
+    context.fillText("Sorry....This browser doesn't support webGL", 0, 10);
+    context.fillText("And text support is also kind of blurry :)", 0, 20);
+  };
+  
    module.exports = Engine;
 })();
