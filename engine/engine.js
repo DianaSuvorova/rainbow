@@ -20,6 +20,8 @@
     this.gl = this._getWebGl();
     this.program = this._createProgram();
     this.timeLoad = Date.now();
+    this.mouse = {x: null, y: null};
+    if (this.props.interactive) this._attachMouseListeners();
   };
 
 
@@ -63,6 +65,7 @@
       full-canvas-sized playground comes with 
       u_resolution : vec2(width, height)
       u_time : float(sec since page engine was created)
+      u_mouse: vec2(x, y) mouse coordinates
       In fragment shader to access x,y of a fragment use gl_PointCoord
     */
 
@@ -70,6 +73,7 @@
 
     var timeFrame = Date.now();
     var time = (timeFrame - this.timeLoad) / 1000.0;
+    var rect = this.props.canvas.getBoundingClientRect();
 
     var resolutionLocation = this.gl.getUniformLocation(this.program, 'u_resolution');
     this.gl.uniform2f(resolutionLocation, this.props.canvas.scrollWidth, this.props.canvas.scrollHeight);
@@ -77,7 +81,31 @@
     var timeLocation = this.gl.getUniformLocation(this.program, 'u_time');
     this.gl.uniform1f(timeLocation, time);
 
+    var mouseLocation = this.gl.getUniformLocation(this.program, 'u_mouse');
+    this.gl.uniform2f(mouseLocation, this.mouse.x - rect.left, this.props.canvas.height-(this.mouse.y-rect.top));
+
+    //gotta have atleast one varying attribute to be compatible with OpenGL 1.0 
+
+    var vertices = new Float32Array([0.0, 0.0, 0.0]),
+    vertexBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, vertices, this.gl.STATIC_DRAW);
+
+    // Bind position data to attribute 0.
+    this.gl.bindAttribLocation(this.program, 0, 'a_position');
+
+    // Assign pointer.
+    this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 0, 0);
+    this.gl.enableVertexAttribArray(0);
+
     this.gl.drawArrays(this.gl.POINTS, 0, 1);
+  };
+
+  Engine.prototype._attachMouseListeners = function () {
+    document.addEventListener('mousemove', function (e) {
+      this.mouse.x = e.clientX || e.pageX;
+      this.mouse.y = e.clientY || e.pageY;
+    }.bind(this), false);
   };
 
   Engine.prototype.whatGl = function () {
