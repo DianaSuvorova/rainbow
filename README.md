@@ -35,6 +35,8 @@ https://github.com/DianaSuvorova/rainbow/tree/master/vis/rainbow
 
 ```
 
+rainbow.js:
+
 ```javascript
 
 var Engine = require('../../engine/engine');
@@ -71,6 +73,5 @@ var fragmentShader = '\n\
 
 module.exports = fragmentShader;
 
-engine.render();
 
 ```
